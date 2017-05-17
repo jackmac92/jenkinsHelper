@@ -1,0 +1,16 @@
+{
+  "name": "cbiJenkins",
+  "version": "1.0.0",
+  "main": "bundle.js",
+  "license": "MIT",
+  "scripts": {
+    "prepublish": "npm build",
+    "build": "rollup -c"
+  },
+  "devDependencies": {
+    "rollup": "^0.41.6"
+  },
+  "dependencies": {
+    "jenkins": "^0.20.0"
+  }
+}
