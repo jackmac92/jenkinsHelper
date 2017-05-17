@@ -6,22 +6,8 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 
 var jenkins = _interopDefault(require('jenkins'));
 
-var config = {
-  jenkins: {
-    password: '2zxx8b4Pba7u',
-    username: 'jmccown'
-  },
-  monitor: {
-    tests: [
-      'api/selenium-grid-dev',
-      'api/selenium-grid-staging',
-      'cbi-site/selenium-grid-dev'
-    ],
-    builds: ['cbi-site/develop']
-  }
-};
-
-const { username, password } = config.jenkins;
+const password = '2zxx8b4Pba7u';
+const username = 'jmccown';
 
 const jenkinsBaseUrl = `https://${username}:${password}@jenkins.cbinsights.com`;
 const Jenkins = jenkins({
@@ -77,7 +63,7 @@ const getJobReport = Jenkins.job.get;
 
 const getFormattedJobReports = jobs =>
   new Promise(resolve => {
-    Promise.all(jobs.map(j => getJobStatus(j.jenkinsName))).then(reports => {
+    Promise.all(jobs.map(j => Jenkins.job.get(j.jenkinsName))).then(reports => {
       const problemJobs = reports.filter(r => r.healthReport.score < 90);
       let err;
       if (problemJobs.length) {
