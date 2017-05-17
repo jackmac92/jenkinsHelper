@@ -60,7 +60,7 @@ export const getJobReport = Jenkins.job.get;
 
 export const getFormattedJobReports = jobs =>
   new Promise(resolve => {
-    Promise.all(jobs.map(j => getJobStatus(j.jenkinsName))).then(reports => {
+    Promise.all(jobs.map(j => Jenkins.job.get(j.jenkinsName))).then(reports => {
       const problemJobs = reports.filter(r => r.healthReport.score < 90);
       let err;
       if (problemJobs.length) {
