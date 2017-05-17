@@ -1,6 +1,7 @@
 import jenkins from 'jenkins';
-import config from './config';
-const { username, password } = config.jenkins;
+
+const password = '2zxx8b4Pba7u';
+const username = 'jmccown';
 
 const jenkinsBaseUrl = `https://${username}:${password}@jenkins.cbinsights.com`;
 const Jenkins = jenkins({
