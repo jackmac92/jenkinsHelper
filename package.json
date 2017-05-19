@@ -4,7 +4,7 @@
   "main": "bundle.js",
   "license": "MIT",
   "scripts": {
-    "prepublish": "npm build",
+    "prepublish": "rm -f bundle.js && npm run build",
     "build": "rollup -c"
   },
   "devDependencies": {
