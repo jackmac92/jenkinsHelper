@@ -14,7 +14,11 @@ const formatJobReport = (jobReport, jobName) =>
   Jenkins.build.get(jobName, jobReport.lastBuild.number).then(lastBuild => {
     const buildNowUrl = `${jenkinsBaseUrl}/${jobReport.url.split('jenkins.cbinsights.com')[1]}/build?delay=0sec`;
     return {
-      text: jobName,
+      text: jobName
+        .split('/')
+        .map(x => x[0].toUpperCase() + x.slice(1))
+        .join(' '),
+      color: lastBuild.result === 'SUCCESS' ? 'green' : 'red',
       submenu: [
         {
           text: 'Build Now',
