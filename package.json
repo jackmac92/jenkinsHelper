@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "prepublish": "rm -f bundle.js && npm run build",
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "postpublish": "git add bundle.js && git commit -m 'Post publish commit'"
   },
   "devDependencies": {
     "rollup": "^0.41.6"
