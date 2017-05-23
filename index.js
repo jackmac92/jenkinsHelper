@@ -20,15 +20,14 @@ const getBuildHistory = (jobReport, jobName, numHist) =>
   );
 
 export const getJobInfo = (jobName, numHist = 5) =>
-  Jenkins.job
-    .get(jobName)
-    .then(jobReport => getBuildHistory(jobReport, jobName, numHist))
-    .then(buildHistory =>
+  Jenkins.job.get(jobName).then(jobReport =>
+    getBuildHistory(jobReport, jobName, numHist).then(buildHistory =>
       Object.assign({}, jobReport, {
         buildHistory,
         buildNowUrl: `${jenkinsBaseUrl}/${jobReport.url.split('jenkins.cbinsights.com')[1]}/build?delay=0sec`
       })
-    );
+    )
+  );
 
 // export const formatJobReport = jobReport => ({
 //   text: jobReport.name,
@@ -76,3 +75,5 @@ const getJobInfoWithFormat = jobName =>
 
 const getJobReports = jobs =>
   Promise.all(jobs.map(j => j.jenkinsName).map(Jenkins.job.get));
+
+getJobInfo('cbi-site/develop').then(console.dir);
