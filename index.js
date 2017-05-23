@@ -24,12 +24,12 @@ const getBuildHistory = (jobReport, jobName, numHist) =>
     })
   );
 
-const getJobInfo = (jobName, numHist = 5) =>
+export const getJobInfo = (jobName, numHist = 5) =>
   Jenkins.job
     .get(jobName)
     .then(jobReport => getBuildHistory(jobReport, jobName, numHist));
 
-const formatJobReport = jobReport => ({
+export const formatJobReport = jobReport => ({
   text: jobReport.name,
   color: jobReport.builds[0].result === 'SUCCESS' ? 'green' : 'red',
   submenu: [
@@ -61,20 +61,17 @@ const formatJobReport = jobReport => ({
     {
       text: 'Full History',
       submenu: jobReport.builds.map(b => ({
-        text: `Build ${b.number}`,
+        text: b.fullDisplayName,
         href: b.url,
+        color: b.result === 'SUCCESS' ? 'green' : 'red',
         size: 8
       }))
     }
   ]
 });
+
 const getJobInfoWithFormat = jobName =>
   getJobInfo(jobName).then(formatJobReport);
 
 const getJobReports = jobs =>
   Promise.all(jobs.map(j => j.jenkinsName).map(Jenkins.job.get));
-
-export const getJobReport = Jenkins.job.get;
-
-export const getFormattedJobReports = jobs =>
-  jobs.map(j => j.jenkinsName).map(getJobInfoWithFormat);

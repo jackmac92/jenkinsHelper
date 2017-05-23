@@ -68,13 +68,34 @@ const formatJobReport = jobReport => ({
     {
       text: 'Full History',
       submenu: jobReport.builds.map(b => ({
-        text: `Build ${b.number}`,
+        text: b.fullDisplayName,
         href: b.url,
+        color: b.result === 'SUCCESS' ? 'green' : 'red',
         size: 8
       }))
     }
   ]
 });
+
+// actions: [Object],
+// artifacts: [],
+// building: false,
+// description: null,
+// displayName: '#256',
+// duration: 465413,
+// estimatedDuration: 470412,
+// executor: null,
+// fullDisplayName: 'CBI-Site » develop #256',
+// id: '256',
+// keepLog: false,
+// number: 256,
+// queueId: 22897,
+// result: 'SUCCESS',
+// timestamp: 1495553806956,
+// url: 'https://jenkins.cbinsights.com/job/cbi-site/job/develop/256/',
+// changeSets: [Object],
+// nextBuild: [Object],
+
 const getJobInfoWithFormat = jobName =>
   getJobInfo(jobName).then(formatJobReport);
 
@@ -82,6 +103,9 @@ const getJobReport = Jenkins.job.get;
 
 const getFormattedJobReports = jobs =>
   jobs.map(j => j.jenkinsName).map(getJobInfoWithFormat);
+getJobInfo('cbi-site/develop').then(report => {
+  console.log(report.builds.slice(0, 5)[0]);
+});
 
 exports.getJobReport = getJobReport;
 exports.getFormattedJobReports = getFormattedJobReports;
