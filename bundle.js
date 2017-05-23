@@ -26,7 +26,7 @@ const getBuildHistory = (jobReport, jobName, numHist) =>
       )
   ).then(buildHistory =>
     Object.assign({}, jobReport, {
-      buiilds: buildHistory,
+      buildHistory,
       buildNowUrl: `${jenkinsBaseUrl}/${jobReport.url.split('jenkins.cbinsights.com')[1]}/build?delay=0sec`
     })
   );
@@ -76,6 +76,8 @@ const formatJobReport = jobReport => ({
     }
   ]
 });
+
+getJobInfo('cbi-site/develop').then(res => console.log(res.buildHistory));
 
 exports.getJobInfo = getJobInfo;
 exports.formatJobReport = formatJobReport;
