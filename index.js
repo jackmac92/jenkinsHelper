@@ -76,4 +76,3 @@ const getJobInfoWithFormat = jobName =>
 const getJobReports = jobs =>
   Promise.all(jobs.map(j => j.jenkinsName).map(Jenkins.job.get));
 
-getJobInfo('cbi-site/develop').then(console.dir);
