@@ -36,6 +36,4 @@ const getJobInfo = (jobName, numHist = 5) =>
     )
   );
 
-getJobInfo('cbi-site/develop').then(console.dir);
-
 exports.getJobInfo = getJobInfo;
