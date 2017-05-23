@@ -17,11 +17,12 @@ const getBuildHistory = (jobReport, jobName, numHist) =>
       .map(b =>
         Jenkins.build.get(jobName, b.number).catch(err => console.log(err))
       )
-  ).then(buildHistory => ({
-    ...jobReport,
-    buiilds: buildHistory,
-    buildNowUrl: `${jenkinsBaseUrl}/${jobReport.url.split('jenkins.cbinsights.com')[1]}/build?delay=0sec`
-  }));
+  ).then(buildHistory =>
+    Object.assign({}, jobReport, {
+      buiilds: buildHistory,
+      buildNowUrl: `${jenkinsBaseUrl}/${jobReport.url.split('jenkins.cbinsights.com')[1]}/build?delay=0sec`
+    })
+  );
 
 const getJobInfo = (jobName, numHist = 5) =>
   Jenkins.job
