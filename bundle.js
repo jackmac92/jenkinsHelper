@@ -1,10 +1,4 @@
-'use strict';
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
-
-var jenkins = _interopDefault(require('jenkins'));
+import jenkins from 'jenkins';
 
 // TODO figure out how to determine if build is active
 const password = '2zxx8b4Pba7u';
@@ -40,4 +34,4 @@ const getJobInfo = (jobName, numHist = 5) =>
     )
   );
 
-exports.getJobInfo = getJobInfo;
+export { getJobInfo };
