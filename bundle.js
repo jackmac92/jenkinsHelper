@@ -7,8 +7,8 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 var jenkins = _interopDefault(require('jenkins'));
 
 // TODO figure out how to determine if build is active
-const password = '2zxx8b4Pba7u';
-const username = 'jmccown';
+const username = process.env.JENKINS_USERNAME;
+const password = process.env.JENKINS_PASSWORD;
 
 const jenkinsBaseUrl = `https://${username}:${password}@jenkins.cbinsights.com`;
 const Jenkins = jenkins({
