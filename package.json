@@ -4,9 +4,10 @@
   "main": "bundle.js",
   "license": "MIT",
   "scripts": {
-    "prepublish": "rm -f bundle.js && npm run build",
+    "prepublish": "npm run build",
+    "postpublish": "git commit -m 'Post publish commit' || echo 'no change'",
     "build": "rollup -c",
-    "postpublish": "git add bundle.js && git commit -m 'Post publish commit'"
+    "postbuild": "git add bundle.js"
   },
   "devDependencies": {
     "rollup": "^0.41.6"

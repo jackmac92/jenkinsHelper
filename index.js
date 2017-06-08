@@ -1,7 +1,7 @@
 import jenkins from 'jenkins';
 // TODO figure out how to determine if build is active
-const password = '2zxx8b4Pba7u';
-const username = 'jmccown';
+const username = process.env.JENKINS_USERNAME;
+const password = process.env.JENKINS_PASSWORD;
 
 const jenkinsBaseUrl = `https://${username}:${password}@jenkins.cbinsights.com`;
 const Jenkins = jenkins({
@@ -32,47 +32,6 @@ export const getJobInfo = (jobName, numHist = 5) =>
       )
     )
   );
-
-// export const formatJobReport = jobReport => ({
-//   text: jobReport.name,
-//   color: jobReport.builds[0].result === 'SUCCESS' ? 'green' : 'red',
-//   submenu: [
-//     // { text: 'current build' },
-//     {
-//       text: 'Build Now',
-//       bash: 'curl',
-//       param1: '-X',
-//       param2: 'POST',
-//       param3: jobReport.buildNowUrl,
-//       terminal: false,
-//       color: 'blue'
-//     },
-//     {
-//       text: 'Most Recent Build',
-//       href: jobReport.builds[0].url,
-//       color: jobReport.builds[0].result === 'SUCCESS' ? 'green' : 'red'
-//     },
-//     {
-//       text: 'Last Failure',
-//       href: jobReport.lastFailedBuild.url,
-//       color: 'red'
-//     },
-//     {
-//       text: 'Last Successful Build',
-//       href: jobReport.lastSuccessfulBuild.url,
-//       color: 'green'
-//     },
-//     {
-//       text: 'Full History',
-//       submenu: jobReport.builds.map(b => ({
-//         text: b.fullDisplayName,
-//         href: b.url,
-//         color: b.result === 'SUCCESS' ? 'green' : 'red',
-//         size: 8
-//       }))
-//     }
-//   ]
-// });
 
 const getJobInfoWithFormat = jobName =>
   getJobInfo(jobName).then(formatJobReport);
