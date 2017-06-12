@@ -156,7 +156,7 @@ const Jenkins = jenkins({
 
 class JenkinsFetcher {
   constructor(dir) {
-    this.jenkinsStore = Fetcher(dir);
+    this.jenkinsStore = new Fetcher(dir);
   }
   getBuildHistory(jobReport, jobName, numHist) {
     return Promise.all(
