@@ -1,5 +1,5 @@
 import jenkins from 'jenkins';
-import jsonCache from './localStore';
+import JsonCache from './localStore';
 // TODO figure out how to determine if build is active
 const username = process.env.JENKINS_USERNAME;
 const password = process.env.JENKINS_PASSWORD;
@@ -13,7 +13,7 @@ const Jenkins = jenkins({
 
 export default class JenkinsFetcher {
   constructor(dir) {
-    this.jenkinsStore = jsonCache(dir);
+    this.jenkinsStore = new JsonCache(dir);
   }
   getBuildHistory(jobReport, jobName, numHist) {
     return Promise.all(
