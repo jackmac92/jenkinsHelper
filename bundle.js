@@ -128,6 +128,7 @@ class Fetcher {
     try {
       return this.cache.load(`${build}-${id}`);
     } catch (e) {
+      console.log(`No cached response for ${build} ${id}`);
       return Promise.reject();
     }
   }
@@ -140,11 +141,6 @@ class Fetcher {
     });
   }
   get(keyInfo) {
-    console.log('gettings');
-    console.log('gettings');
-    console.log('gettings');
-    console.log('gettings');
-    console.log('gettings');
     return this.getCacheResponse(keyInfo).catch(() =>
       this.requestAndCache(keyInfo)
     );
@@ -184,9 +180,5 @@ const getJobInfo = (jobName, numHist = 5) =>
       )
     )
   );
-
-getJobInfo('tests/integration/cbi-site/selenium-grid-staging').then(
-  console.log
-);
 
 exports.getJobInfo = getJobInfo;
