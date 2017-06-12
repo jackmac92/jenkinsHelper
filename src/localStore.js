@@ -1,20 +1,14 @@
-'use strict';
+import mkdirp from 'mkdirp';
+import path from 'path';
+import fs from 'fs';
+import jenkins from 'jenkins';
 
-Object.defineProperty(exports, '__esModule', { value: true });
+const username = process.env.JENKINS_USERNAME;
+const password = process.env.JENKINS_PASSWORD;
 
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
-
-var jenkins = _interopDefault(require('jenkins'));
-var mkdirp = _interopDefault(require('mkdirp'));
-var path = _interopDefault(require('path'));
-var fs = _interopDefault(require('fs'));
-
-const username$1 = process.env.JENKINS_USERNAME;
-const password$1 = process.env.JENKINS_PASSWORD;
-
-const jenkinsBaseUrl$1 = `https://${username$1}:${password$1}@jenkins.cbinsights.com`;
-const Jenkins$1 = jenkins({
-  baseUrl: jenkinsBaseUrl$1,
+const jenkinsBaseUrl = `https://${username}:${password}@jenkins.cbinsights.com`;
+const Jenkins = jenkins({
+  baseUrl: jenkinsBaseUrl,
   crumbIssuer: true,
   promisify: true
 });
@@ -116,7 +110,7 @@ const loadFile = f =>
     });
   });
 
-class Fetcher {
+export default class Fetcher {
   constructor() {
     this.cache = store({});
   }
@@ -128,11 +122,12 @@ class Fetcher {
     try {
       return this.cache.load(`${build}-${id}`);
     } catch (e) {
+      console.log(`No cached response for ${build} ${id}`);
       return Promise.reject();
     }
   }
   makeRequest({ build, id }) {
-    return Jenkins$1.build.get(build, id).catch(console.log);
+    return Jenkins.build.get(build, id).catch(console.log);
   }
   requestAndCache(keyInfo) {
     return this.makeRequest(keyInfo).then(res => {
@@ -140,53 +135,8 @@ class Fetcher {
     });
   }
   get(keyInfo) {
-    console.log('gettings');
-    console.log('gettings');
-    console.log('gettings');
-    console.log('gettings');
-    console.log('gettings');
     return this.getCacheResponse(keyInfo).catch(() =>
       this.requestAndCache(keyInfo)
     );
   }
 }
-
-// TODO figure out how to determine if build is active
-const username = process.env.JENKINS_USERNAME;
-const password = process.env.JENKINS_PASSWORD;
-
-const jenkinsBaseUrl = `https://${username}:${password}@jenkins.cbinsights.com`;
-const Jenkins = jenkins({
-  baseUrl: jenkinsBaseUrl,
-  crumbIssuer: true,
-  promisify: true
-});
-
-const jenkinsStore = new Fetcher();
-
-const getBuildHistory = (jobReport, jobName, numHist) =>
-  Promise.all(
-    jobReport.builds
-      .slice(0, numHist)
-      .map(b => jenkinsStore.get({ build: jobName, id: b.number }))
-  );
-
-const getJobInfo = (jobName, numHist = 5) =>
-  new Promise((resolve, reject) =>
-    Jenkins.job.get(jobName).then(jobReport =>
-      getBuildHistory(jobReport, jobName, numHist).then(buildHistory =>
-        resolve(
-          Object.assign({}, jobReport, {
-            buildHistory,
-            buildNowUrl: `${jenkinsBaseUrl}/${jobReport.url.split('jenkins.cbinsights.com')[1]}/build?delay=0sec`
-          })
-        )
-      )
-    )
-  );
-
-getJobInfo('tests/integration/cbi-site/selenium-grid-staging').then(
-  console.log
-);
-
-exports.getJobInfo = getJobInfo;

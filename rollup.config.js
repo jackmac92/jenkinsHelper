@@ -1,6 +1,6 @@
 export default {
   dest: 'bundle.js',
   format: 'cjs',
-  entry: 'index.js',
-  external: ['jenkins']
+  entry: 'src/index.js',
+  external: ['jenkins', 'mkdirp', 'fs', 'path']
 };

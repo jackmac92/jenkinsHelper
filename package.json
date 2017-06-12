@@ -13,6 +13,7 @@
     "rollup": "^0.41.6"
   },
   "dependencies": {
-    "jenkins": "^0.20.0"
+    "jenkins": "^0.20.0",
+    "mkdirp": "^0.5.1"
   }
 }

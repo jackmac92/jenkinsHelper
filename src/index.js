@@ -1,4 +1,5 @@
 import jenkins from 'jenkins';
+import jsonCache from './localStore';
 // TODO figure out how to determine if build is active
 const username = process.env.JENKINS_USERNAME;
 const password = process.env.JENKINS_PASSWORD;
@@ -10,13 +11,13 @@ const Jenkins = jenkins({
   promisify: true
 });
 
+const jenkinsStore = new jsonCache();
+
 const getBuildHistory = (jobReport, jobName, numHist) =>
   Promise.all(
     jobReport.builds
       .slice(0, numHist)
-      .map(b =>
-        Jenkins.build.get(jobName, b.number).catch(err => console.log(err))
-      )
+      .map(b => jenkinsStore.get({ build: jobName, id: b.number }))
   );
 
 export const getJobInfo = (jobName, numHist = 5) =>
@@ -33,8 +34,9 @@ export const getJobInfo = (jobName, numHist = 5) =>
     )
   );
 
-const getJobInfoWithFormat = jobName =>
-  getJobInfo(jobName).then(formatJobReport);
-
 const getJobReports = jobs =>
   Promise.all(jobs.map(j => j.jenkinsName).map(Jenkins.job.get));
+
+getJobInfo('tests/integration/cbi-site/selenium-grid-staging').then(
+  console.log
+);
