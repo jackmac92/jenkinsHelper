@@ -37,6 +37,3 @@ export const getJobInfo = (jobName, numHist = 5) =>
 const getJobReports = jobs =>
   Promise.all(jobs.map(j => j.jenkinsName).map(Jenkins.job.get));
 
-getJobInfo('tests/integration/cbi-site/selenium-grid-staging').then(
-  console.log
-);
