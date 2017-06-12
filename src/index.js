@@ -14,6 +14,7 @@ const Jenkins = jenkins({
 export default class JenkinsFetcher {
   constructor(dir) {
     this.jenkinsStore = new JsonCache(dir);
+    return this;
   }
   getBuildHistory(jobReport, jobName, numHist) {
     return Promise.all(
@@ -41,3 +42,9 @@ export default class JenkinsFetcher {
 
 const getJobReports = jobs =>
   Promise.all(jobs.map(j => j.jenkinsName).map(Jenkins.job.get));
+
+if (require.main === module) {
+  new JenkinsFetcher('./cache')
+    .getJobInfo('tests/integration/cbi-site/selenium-grid-dev')
+    .then(console.log);
+}

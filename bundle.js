@@ -157,6 +157,7 @@ const Jenkins = jenkins({
 class JenkinsFetcher {
   constructor(dir) {
     this.jenkinsStore = new Fetcher(dir);
+    return this;
   }
   getBuildHistory(jobReport, jobName, numHist) {
     return Promise.all(
@@ -180,6 +181,12 @@ class JenkinsFetcher {
       )
     );
   }
+}
+
+if (require.main === module) {
+  new JenkinsFetcher('./cache')
+    .getJobInfo('tests/integration/cbi-site/selenium-grid-dev')
+    .then(console.log);
 }
 
 module.exports = JenkinsFetcher;
