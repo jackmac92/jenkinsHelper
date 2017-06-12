@@ -34,10 +34,8 @@ const mkderp = (dir, file = '') =>
     console.log(err);
   });
 
-const store = () => {
-  const dir = path.join(process.cwd(), 'store');
-  let getKey;
-
+const store = dir => {
+  const dir = dir || path.join(process.cwd(), 'store');
   return {
     dir, // store in this directory
 
@@ -117,8 +115,8 @@ const loadFile = f =>
   });
 
 class Fetcher {
-  constructor() {
-    this.cache = store({});
+  constructor(dir) {
+    this.cache = store(dir);
   }
   saveToCache({ build, id }, res) {
     const name = `${build}-${id}`;
