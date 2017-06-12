@@ -156,15 +156,6 @@ const Jenkins = jenkins({
   promisify: true
 });
 
-const jenkinsStore = new Fetcher();
-
-const getBuildHistory = (jobReport, jobName, numHist) =>
-  Promise.all(
-    jobReport.builds
-      .slice(0, numHist)
-      .map(b => jenkinsStore.get({ build: jobName, id: b.number }))
-  );
-
 const getJobInfo = (jobName, numHist = 5) =>
   new Promise((resolve, reject) =>
     Jenkins.job.get(jobName).then(jobReport =>
@@ -179,4 +170,32 @@ const getJobInfo = (jobName, numHist = 5) =>
     )
   );
 
+class JenkinsFetcher {
+  constructor(dir) {
+    this.jenkinsStore = Fetcher(dir);
+  }
+  getBuildHistory(jobReport, jobName, numHist) {
+    return Promise.all(
+      jobReport.builds
+        .slice(0, numHist)
+        .map(b => this.jenkinsStore.get({ build: jobName, id: b.number }))
+    );
+  }
+  getJobInfo(jobName, numHist = 5) {
+    return new Promise((resolve, reject) =>
+      Jenkins.job.get(jobName).then(jobReport =>
+        this.getBuildHistory(jobReport, jobName, numHist).then(buildHistory =>
+          resolve(
+            Object.assign({}, jobReport, {
+              buildHistory,
+              buildNowUrl: `${jenkinsBaseUrl}/${jobReport.url.split('jenkins.cbinsights.com')[1]}/build?delay=0sec`
+            })
+          )
+        )
+      )
+    );
+  }
+}
+
 exports.getJobInfo = getJobInfo;
+exports['default'] = JenkinsFetcher;

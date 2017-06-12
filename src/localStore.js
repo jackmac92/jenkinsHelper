@@ -28,8 +28,8 @@ const mkderp = (dir, file = '') =>
     console.log(err);
   });
 
-const store = dir => {
-  const dir = dir || path.join(process.cwd(), 'store');
+const store = storage => {
+  const dir = storage || path.join(process.cwd(), 'store');
   return {
     dir, // store in this directory
 
