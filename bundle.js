@@ -1,7 +1,5 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', { value: true });
-
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var jenkins = _interopDefault(require('jenkins'));
@@ -34,8 +32,8 @@ const mkderp = (dir, file = '') =>
     console.log(err);
   });
 
-const store = dir => {
-  const dir = dir || path.join(process.cwd(), 'store');
+const store = storage => {
+  const dir = storage || path.join(process.cwd(), 'store');
   return {
     dir, // store in this directory
 
@@ -156,20 +154,6 @@ const Jenkins = jenkins({
   promisify: true
 });
 
-const getJobInfo = (jobName, numHist = 5) =>
-  new Promise((resolve, reject) =>
-    Jenkins.job.get(jobName).then(jobReport =>
-      getBuildHistory(jobReport, jobName, numHist).then(buildHistory =>
-        resolve(
-          Object.assign({}, jobReport, {
-            buildHistory,
-            buildNowUrl: `${jenkinsBaseUrl}/${jobReport.url.split('jenkins.cbinsights.com')[1]}/build?delay=0sec`
-          })
-        )
-      )
-    )
-  );
-
 class JenkinsFetcher {
   constructor(dir) {
     this.jenkinsStore = Fetcher(dir);
@@ -197,5 +181,4 @@ class JenkinsFetcher {
   }
 }
 
-exports.getJobInfo = getJobInfo;
-exports['default'] = JenkinsFetcher;
+module.exports = JenkinsFetcher;
