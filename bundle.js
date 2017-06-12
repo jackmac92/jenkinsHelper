@@ -166,9 +166,10 @@ class JenkinsFetcher {
     );
   }
   getJobInfo(jobName, numHist = 5) {
+    const self = this;
     return new Promise((resolve, reject) =>
       Jenkins.job.get(jobName).then(jobReport =>
-        this.getBuildHistory(jobReport, jobName, numHist).then(buildHistory =>
+        self.getBuildHistory(jobReport, jobName, numHist).then(buildHistory =>
           resolve(
             Object.assign({}, jobReport, {
               buildHistory,
