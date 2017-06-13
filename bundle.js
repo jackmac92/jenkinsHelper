@@ -120,12 +120,13 @@ class Fetcher {
   requestAndCache(keyInfo) {
     return this.makeRequest(keyInfo).then(res => {
       this.saveToCache(keyInfo, res);
+      return res;
     });
   }
   get(keyInfo) {
-    return this.getCacheResponse(keyInfo)
-      .then(() => console.log(`Found cached response for ${keyInfo}`))
-      .catch(() => this.requestAndCache(keyInfo));
+    return this.getCacheResponse(keyInfo).catch(() =>
+      this.requestAndCache(keyInfo)
+    );
   }
 }
 
