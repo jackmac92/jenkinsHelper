@@ -1,17 +1,6 @@
 import mkdirp from 'mkdirp';
 import path from 'path';
 import fs from 'fs';
-import jenkins from 'jenkins';
-
-const username = process.env.JENKINS_USERNAME;
-const password = process.env.JENKINS_PASSWORD;
-
-const jenkinsBaseUrl = `https://${username}:${password}@jenkins.cbinsights.com`;
-const Jenkins = jenkins({
-  baseUrl: jenkinsBaseUrl,
-  crumbIssuer: true,
-  promisify: true
-});
 
 const mkderp = (dir, file = '') =>
   new Promise((resolve, reject) => {
@@ -21,12 +10,7 @@ const mkderp = (dir, file = '') =>
       }
       resolve();
     });
-  }).catch(err => {
-    console.log('error mkderp');
-    console.log('error mkderp');
-    console.log('error mkderp');
-    console.log(err);
-  });
+  }).catch(console.log);
 
 const store = storage => {
   const dir = storage || path.join(process.cwd(), 'store');
@@ -109,23 +93,24 @@ const loadFile = f =>
   });
 
 export default class Fetcher {
-  constructor(dir) {
+  constructor({ dir, Jenkins }) {
     this.cache = store(dir);
+    this.Jenkins = Jenkins;
+    this.saveToCache = this.saveToCache.bind(this);
+    this.getCacheResponse = this.getCacheResponse.bind(this);
+    this.makeRequest = this.makeRequest.bind(this);
+    this.requestAndCache = this.requestAndCache.bind(this);
+    this.get = this.get.bind(this);
   }
   saveToCache({ build, id }, res) {
     const name = `${build}-${id}`;
     return this.cache.add(name, res);
   }
   getCacheResponse({ build, id }) {
-    try {
-      return this.cache.load(`${build}-${id}`);
-    } catch (e) {
-      console.log(`No cached response for ${build} ${id}`);
-      return Promise.reject();
-    }
+    return this.cache.load(`${build}-${id}`);
   }
   makeRequest({ build, id }) {
-    return Jenkins.build.get(build, id).catch(console.log);
+    return this.Jenkins.build.get(build, id).catch(console.log);
   }
   requestAndCache(keyInfo) {
     return this.makeRequest(keyInfo).then(res => {
@@ -133,8 +118,8 @@ export default class Fetcher {
     });
   }
   get(keyInfo) {
-    return this.getCacheResponse(keyInfo).catch(() =>
-      this.requestAndCache(keyInfo)
-    );
+    return this.getCacheResponse(keyInfo)
+      .then(() => console.log(`Found cached response for ${keyInfo}`))
+      .catch(() => this.requestAndCache(keyInfo));
   }
 }

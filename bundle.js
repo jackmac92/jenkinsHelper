@@ -7,16 +7,6 @@ var mkdirp = _interopDefault(require('mkdirp'));
 var path = _interopDefault(require('path'));
 var fs = _interopDefault(require('fs'));
 
-const username$1 = process.env.JENKINS_USERNAME;
-const password$1 = process.env.JENKINS_PASSWORD;
-
-const jenkinsBaseUrl$1 = `https://${username$1}:${password$1}@jenkins.cbinsights.com`;
-const Jenkins$1 = jenkins({
-  baseUrl: jenkinsBaseUrl$1,
-  crumbIssuer: true,
-  promisify: true
-});
-
 const mkderp = (dir, file = '') =>
   new Promise((resolve, reject) => {
     mkdirp(path.join(dir, file.split('/').slice(0, -1).join('/')), err => {
@@ -25,12 +15,7 @@ const mkderp = (dir, file = '') =>
       }
       resolve();
     });
-  }).catch(err => {
-    console.log('error mkderp');
-    console.log('error mkderp');
-    console.log('error mkderp');
-    console.log(err);
-  });
+  }).catch(console.log);
 
 const store = storage => {
   const dir = storage || path.join(process.cwd(), 'store');
@@ -113,23 +98,24 @@ const loadFile = f =>
   });
 
 class Fetcher {
-  constructor(dir) {
+  constructor({ dir, Jenkins }) {
     this.cache = store(dir);
+    this.Jenkins = Jenkins;
+    this.saveToCache = this.saveToCache.bind(this);
+    this.getCacheResponse = this.getCacheResponse.bind(this);
+    this.makeRequest = this.makeRequest.bind(this);
+    this.requestAndCache = this.requestAndCache.bind(this);
+    this.get = this.get.bind(this);
   }
   saveToCache({ build, id }, res) {
     const name = `${build}-${id}`;
     return this.cache.add(name, res);
   }
   getCacheResponse({ build, id }) {
-    try {
-      return this.cache.load(`${build}-${id}`);
-    } catch (e) {
-      console.log(`No cached response for ${build} ${id}`);
-      return Promise.reject();
-    }
+    return this.cache.load(`${build}-${id}`);
   }
   makeRequest({ build, id }) {
-    return Jenkins$1.build.get(build, id).catch(console.log);
+    return this.Jenkins.build.get(build, id).catch(console.log);
   }
   requestAndCache(keyInfo) {
     return this.makeRequest(keyInfo).then(res => {
@@ -137,27 +123,24 @@ class Fetcher {
     });
   }
   get(keyInfo) {
-    return this.getCacheResponse(keyInfo).catch(() =>
-      this.requestAndCache(keyInfo)
-    );
+    return this.getCacheResponse(keyInfo)
+      .then(() => console.log(`Found cached response for ${keyInfo}`))
+      .catch(() => this.requestAndCache(keyInfo));
   }
 }
 
-// TODO figure out how to determine if build is active
-const username = process.env.JENKINS_USERNAME;
-const password = process.env.JENKINS_PASSWORD;
-
-const jenkinsBaseUrl = `https://${username}:${password}@jenkins.cbinsights.com`;
-const Jenkins = jenkins({
-  baseUrl: jenkinsBaseUrl,
-  crumbIssuer: true,
-  promisify: true
-});
-
 class JenkinsFetcher {
-  constructor(dir) {
-    this.jenkinsStore = new Fetcher(dir);
-    return this;
+  constructor({ dir, username, password }) {
+    this.jenkinsBaseUrl = `https://${username}:${password}@jenkins.cbinsights.com`;
+    const Jenkins = jenkins({
+      baseUrl: this.jenkinsBaseUrl,
+      crumbIssuer: true,
+      promisify: true
+    });
+    this.jenkinsClient = Jenkins;
+    this.jenkinsStore = new Fetcher({ dir, Jenkins });
+    this.getJobInfo = this.getJobInfo.bind(this);
+    this.getBuildHistory = this.getBuildHistory.bind(this);
   }
   getBuildHistory(jobReport, jobName, numHist) {
     return Promise.all(
@@ -169,12 +152,12 @@ class JenkinsFetcher {
   getJobInfo(jobName, numHist = 5) {
     const self = this;
     return new Promise((resolve, reject) =>
-      Jenkins.job.get(jobName).then(jobReport =>
+      self.jenkinsClient.job.get(jobName).then(jobReport =>
         self.getBuildHistory(jobReport, jobName, numHist).then(buildHistory =>
           resolve(
             Object.assign({}, jobReport, {
               buildHistory,
-              buildNowUrl: `${jenkinsBaseUrl}/${jobReport.url.split('jenkins.cbinsights.com')[1]}/build?delay=0sec`
+              buildNowUrl: `${this.jenkinsBaseUrl}/${jobReport.url.split('jenkins.cbinsights.com')[1]}/build?delay=0sec`
             })
           )
         )
@@ -184,7 +167,10 @@ class JenkinsFetcher {
 }
 
 if (require.main === module) {
-  new JenkinsFetcher('./cache')
+  const username = process.env.JENKINS_USERNAME;
+  const password = process.env.JENKINS_PASSWORD;
+
+  new JenkinsFetcher({ dir: './cache', username, password })
     .getJobInfo('tests/integration/cbi-site/selenium-grid-dev')
     .then(console.log);
 }
