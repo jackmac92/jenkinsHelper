@@ -119,7 +119,9 @@ class Fetcher {
   }
   requestAndCache(keyInfo) {
     return this.makeRequest(keyInfo).then(res => {
-      this.saveToCache(keyInfo, res);
+      if (!res.building) {
+        this.saveToCache(keyInfo, res);
+      }
       return res;
     });
   }
