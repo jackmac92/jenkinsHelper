@@ -29,7 +29,8 @@ export default class JenkinsFetcher {
           resolve(
             Object.assign({}, jobReport, {
               buildHistory,
-              buildNowUrl: `${this.jenkinsBaseUrl}/${jobReport.url.split('jenkins.cbinsights.com')[1]}/build?delay=0sec`
+              buildNowUrl: `${this.jenkinsBaseUrl}/${jobReport.url.split('jenkins.cbinsights.com')[1]}/build?delay=0sec`,
+              jenkinsName: jobName
             })
           )
         )
