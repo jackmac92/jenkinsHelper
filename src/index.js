@@ -1,5 +1,17 @@
 import jenkins from 'jenkins';
 import JsonCache from './localStore';
+import localApi from 'localApi';
+
+const getJob = jobName => Jenkins.job.get(jobName);
+
+const getBuild = (name, id) => {
+  new localApi({
+    doRequest: (name, id) => Jenkins.build.get(name, id),
+    shouldCache: (res, name, id) => !res.building,
+    getKey: (name, id) => `${name}-${id}`,
+    storage: './'
+  });
+};
 
 export default class JenkinsFetcher {
   constructor({ dir, username, password }) {
@@ -9,27 +21,39 @@ export default class JenkinsFetcher {
       crumbIssuer: true,
       promisify: true
     });
-    this.jenkinsClient = Jenkins;
-    this.jenkinsStore = new JsonCache({ dir, Jenkins });
+    this.getJob = jobName => Jenkins.job.get(jobName);
+    const buildFetcher = new localApi({
+      doRequest: (name, id) => Jenkins.build.get(name, id),
+      shouldCache: (res, name, id) => !res.building,
+      getKey: (name, id) => `${name}-${id}`,
+      storage: dir
+    });
+    this.getBuild = (name, id) => buildFetcher.get(name, id);
+
     this.getJobInfo = this.getJobInfo.bind(this);
+    this.makeBuildUrl = this.makeBuildUrl.bind(this);
     this.getBuildHistory = this.getBuildHistory.bind(this);
   }
-  getBuildHistory(jobReport, jobName, numHist) {
+
+  getBuildHistory(jobReport, jobName, numHist = 50) {
     return Promise.all(
       jobReport.builds
         .slice(0, numHist)
-        .map(b => this.jenkinsStore.get({ build: jobName, id: b.number }))
+        .map(b => this.getBuild(jobName, b.number))
     );
   }
-  getJobInfo(jobName, numHist = 5) {
+  makeBuildUrl(url) {
+    return `${this.jenkinsBaseUrl}/${url.split('jenkins.cbinsights.com')[1]}/build?delay=0sec`;
+  }
+  getJobInfo(jobName) {
     const self = this;
     return new Promise((resolve, reject) =>
-      self.jenkinsClient.job.get(jobName).then(jobReport =>
-        self.getBuildHistory(jobReport, jobName, numHist).then(buildHistory =>
+      self.getJob(jobName).then(jobReport =>
+        self.getBuildHistory(jobReport, jobName).then(buildHistory =>
           resolve(
             Object.assign({}, jobReport, {
               buildHistory,
-              buildNowUrl: `${this.jenkinsBaseUrl}/${jobReport.url.split('jenkins.cbinsights.com')[1]}/build?delay=0sec`,
+              buildNowUrl: this.makeBuildUrl(jobReport.url),
               jenkinsName: jobName
             })
           )
