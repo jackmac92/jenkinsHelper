@@ -1,21 +1,11 @@
 import jenkins from 'jenkins';
-import JsonCache from './localStore';
 import localApi from 'localApi';
-
-const getJob = jobName => Jenkins.job.get(jobName);
-
-const getBuild = (name, id) => {
-  new localApi({
-    doRequest: (name, id) => Jenkins.build.get(name, id),
-    shouldCache: (res, name, id) => !res.building,
-    getKey: (name, id) => `${name}-${id}`,
-    storage: './'
-  });
-};
 
 export default class JenkinsFetcher {
   constructor({ dir, username, password }) {
     this.jenkinsBaseUrl = `https://${username}:${password}@jenkins.cbinsights.com`;
+    this.makeJenkinsUrl = (un, pw) =>
+      `https://${un}:${pw}@jenkins.cbinsights.com`;
     const Jenkins = jenkins({
       baseUrl: this.jenkinsBaseUrl,
       crumbIssuer: true,
@@ -34,7 +24,6 @@ export default class JenkinsFetcher {
     this.makeBuildUrl = this.makeBuildUrl.bind(this);
     this.getBuildHistory = this.getBuildHistory.bind(this);
   }
-
   getBuildHistory(jobReport, jobName, numHist = 50) {
     return Promise.all(
       jobReport.builds
@@ -43,22 +32,27 @@ export default class JenkinsFetcher {
     );
   }
   makeBuildUrl(url) {
-    return `${this.jenkinsBaseUrl}/${url.split('jenkins.cbinsights.com')[1]}/build?delay=0sec`;
+    return `${this.jenkinsBaseUrl}/${url.split(
+      'jenkins.cbinsights.com'
+    )[1]}/build?delay=0sec`;
   }
   getJobInfo(jobName) {
     const self = this;
     return new Promise((resolve, reject) =>
-      self.getJob(jobName).then(jobReport =>
-        self.getBuildHistory(jobReport, jobName).then(buildHistory =>
-          resolve(
-            Object.assign({}, jobReport, {
-              buildHistory,
-              buildNowUrl: this.makeBuildUrl(jobReport.url),
-              jenkinsName: jobName
-            })
+      self
+        .getJob(jobName)
+        .then(jobReport =>
+          self.getBuildHistory(jobReport, jobName).then(buildHistory =>
+            resolve(
+              Object.assign({}, jobReport, {
+                buildHistory,
+                buildNowUrl: this.makeBuildUrl(jobReport.url),
+                jenkinsName: jobName
+              })
+            )
           )
         )
-      )
+        .catch(reject)
     );
   }
 }
