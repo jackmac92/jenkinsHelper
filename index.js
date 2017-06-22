@@ -11,7 +11,12 @@ export default class JenkinsFetcher {
       crumbIssuer: true,
       promisify: true
     });
-    this.getJob = jobName => Jenkins.job.get(jobName);
+    this.getJob = jobName =>
+      Jenkins.job.get(jobName).catch(err => {
+        console.log(`Error fetching ${jobName}`);
+        console.log(err);
+        console.log(`Error fetching ${jobName}`);
+      });
     const buildFetcher = new localApi({
       doRequest: (name, id) => Jenkins.build.get(name, id),
       shouldCache: (res, name, id) => !res.building,
