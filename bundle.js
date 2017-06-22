@@ -15,12 +15,7 @@ class JenkinsFetcher {
       crumbIssuer: true,
       promisify: true
     });
-    this.getJob = jobName =>
-      Jenkins.job.get(jobName).catch(err => {
-        console.log(`Error fetching ${jobName}`);
-        console.log(err);
-        console.log(`Error fetching ${jobName}`);
-      });
+    this.getJob = jobName => Jenkins.job.get(jobName);
     const buildFetcher = new localApi({
       doRequest: (name, id) => Jenkins.build.get(name, id),
       shouldCache: (res, name, id) => !res.building,
@@ -50,6 +45,9 @@ class JenkinsFetcher {
     return new Promise((resolve, reject) =>
       self
         .getJob(jobName)
+        .catch(err => {
+          resolve({ isError: true, err });
+        })
         .then(jobReport =>
           self.getBuildHistory(jobReport, jobName).then(buildHistory =>
             resolve(
