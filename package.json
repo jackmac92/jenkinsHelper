@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "jenkins": "^0.20.0",
-    "localApi": "^2.1.0",
+    "localApi": "^2.2.0",
     "lodash": "^4.17.4",
     "mkdirp": "^0.5.1"
   }

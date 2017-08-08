@@ -16,8 +16,8 @@ debug@^2.4.5:
     ms "2.0.0"
 
 follow-redirects@^1.2.3:
-  version "1.2.3"
-  resolved "https://npm.jackmac.party/follow-redirects/-/follow-redirects-1.2.3.tgz#01abaeca85e3609837d9fcda3167a7e42fdaca21"
+  version "1.2.4"
+  resolved "https://npm.jackmac.party/follow-redirects/-/follow-redirects-1.2.4.tgz#355e8f4d16876b43f577b0d5ce2668b9723214ea"
   dependencies:
     debug "^2.4.5"
 
@@ -27,13 +27,13 @@ is-buffer@^1.1.5:
 
 jenkins@^0.20.0:
   version "0.20.0"
-  resolved "http://localhost:4873/jenkins/-/jenkins-0.20.0.tgz#9778d289508c04666ae5b8f557d9917c89c41ca2"
+  resolved "https://npm.jackmac.party/jenkins/-/jenkins-0.20.0.tgz#9778d289508c04666ae5b8f557d9917c89c41ca2"
   dependencies:
     papi "^0.26.0"
 
-localApi@^2.1.0:
-  version "2.1.0"
-  resolved "https://npm.jackmac.party/localApi/-/localApi-2.1.0.tgz#fe762ffc5910ffb4cff6bef76624a431a8f86d91"
+localApi@^2.2.0:
+  version "2.2.0"
+  resolved "https://npm.jackmac.party/localApi/-/localApi-2.2.0.tgz#4571a8120cfe73d9c3431bed1522b1d0f711c040"
   dependencies:
     axios "^0.16.2"
     mkdirp "^0.5.1"
@@ -45,11 +45,11 @@ lodash@^4.17.4:
 
 minimist@0.0.8:
   version "0.0.8"
-  resolved "https://registry.yarnpkg.com/minimist/-/minimist-0.0.8.tgz#857fcabfc3397d2625b8228262e86aa7a011b05d"
+  resolved "https://npm.jackmac.party/minimist/-/minimist-0.0.8.tgz#857fcabfc3397d2625b8228262e86aa7a011b05d"
 
 mkdirp@^0.5.1:
   version "0.5.1"
-  resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-0.5.1.tgz#30057438eac6cf7f8c4767f38648d6697d75c903"
+  resolved "https://npm.jackmac.party/mkdirp/-/mkdirp-0.5.1.tgz#30057438eac6cf7f8c4767f38648d6697d75c903"
   dependencies:
     minimist "0.0.8"
 
@@ -63,20 +63,20 @@ node-uuid@^1.4.8:
 
 papi@^0.26.0:
   version "0.26.0"
-  resolved "http://localhost:4873/papi/-/papi-0.26.0.tgz#d6136a1492075ebc26452bd8e09e449980c47dd3"
+  resolved "https://npm.jackmac.party/papi/-/papi-0.26.0.tgz#d6136a1492075ebc26452bd8e09e449980c47dd3"
 
 rollup@^0.41.6:
   version "0.41.6"
-  resolved "http://localhost:4873/rollup/-/rollup-0.41.6.tgz#e0d05497877a398c104d816d2733a718a7a94e2a"
+  resolved "https://npm.jackmac.party/rollup/-/rollup-0.41.6.tgz#e0d05497877a398c104d816d2733a718a7a94e2a"
   dependencies:
     source-map-support "^0.4.0"
 
 source-map-support@^0.4.0:
   version "0.4.15"
-  resolved "http://localhost:4873/source-map-support/-/source-map-support-0.4.15.tgz#03202df65c06d2bd8c7ec2362a193056fef8d3b1"
+  resolved "https://npm.jackmac.party/source-map-support/-/source-map-support-0.4.15.tgz#03202df65c06d2bd8c7ec2362a193056fef8d3b1"
   dependencies:
     source-map "^0.5.6"
 
 source-map@^0.5.6:
   version "0.5.6"
-  resolved "http://localhost:4873/source-map/-/source-map-0.5.6.tgz#75ce38f52bf0733c5a7f0c118d81334a2bb5f412"
+  resolved "https://npm.jackmac.party/source-map/-/source-map-0.5.6.tgz#75ce38f52bf0733c5a7f0c118d81334a2bb5f412"
