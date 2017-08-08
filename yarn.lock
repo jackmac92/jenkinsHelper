@@ -31,9 +31,9 @@ jenkins@^0.20.0:
   dependencies:
     papi "^0.26.0"
 
-localApi@^2.2.0:
-  version "2.2.0"
-  resolved "https://npm.jackmac.party/localApi/-/localApi-2.2.0.tgz#4571a8120cfe73d9c3431bed1522b1d0f711c040"
+localApi@^2.3.0:
+  version "2.3.0"
+  resolved "https://npm.jackmac.party/localApi/-/localApi-2.3.0.tgz#50df6babc0d9eda888261ef3deeb14a9760bba04"
   dependencies:
     axios "^0.16.2"
     mkdirp "^0.5.1"
